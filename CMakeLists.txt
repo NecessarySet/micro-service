@@ -73,6 +73,12 @@ message(OPENSSL_LIBS " ${OPENSSL_LIBRARIES}")
 message(CPPRESTSDK_LIBRARY " ${CPPRESTSDK_LIBRARY}")
 message(LIBRARIES_SEARCH_PATHS " ${LIBRARIES_SEARCH_PATHS}")
 
+find_package( ZLIB REQUIRED )
+if ( ZLIB_FOUND )
+    include_directories( ${ZLIB_INCLUDE_DIRS} )
+    target_link_libraries( ${PROJECT_NAME} ${ZLIB_LIBRARIES} )
+endif( ZLIB_FOUND )
+
 include_directories(${HEADER_SEARCH_PATHS})
 if (APPLE)
     target_link_libraries(${PROJECT_NAME} "-framework CoreFoundation")
