@@ -15,7 +15,7 @@ if(UNIX) # Darwing or Linux
 	    list(REVERSE OPENSSL_ROOT_DIR)
 
         find_package(OpenSSL 1.0.2 REQUIRED)
-        set(OPENSSL_VERSION "1.0.2f")
+        set(OPENSSL_VERSION "1.0.2o_2")
     else()
         find_package(OpenSSL 1.0.1 REQUIRED)
         set(OPENSSL_VERSION "1.0.1")
@@ -72,6 +72,13 @@ message(BOOST_LIBS " ${Boost_LIBRARIES}")
 message(OPENSSL_LIBS " ${OPENSSL_LIBRARIES}")
 message(CPPRESTSDK_LIBRARY " ${CPPRESTSDK_LIBRARY}")
 message(LIBRARIES_SEARCH_PATHS " ${LIBRARIES_SEARCH_PATHS}")
+
+find_package( ZLIB REQUIRED )
+if ( ZLIB_FOUND )
+    include_directories( ${ZLIB_INCLUDE_DIRS} )
+    target_link_libraries( ${PROJECT_NAME} ${ZLIB_LIBRARIES} )
+endif( ZLIB_FOUND )
+
 
 include_directories(${HEADER_SEARCH_PATHS})
 if (APPLE)
