@@ -14,7 +14,7 @@ install_cpprestsdk(){
    fi
    
 	git clone https://github.com/NecessarySet/cpprestsdk.git "$restsdkDir"
-	(cd $restsdkDir && git checkout -b $RESTSDK_VERSION)
+	(cd $restsdkDir && git checkout $RESTSDK_VERSION)
 	mkdir "$restsdkBuildDir"
 	if [[ "$OSTYPE" == "linux-gnu" ]]; then
 		export CXX=g++-4.9
