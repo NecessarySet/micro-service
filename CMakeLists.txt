@@ -45,6 +45,7 @@ endif()
 
 # source files ...
 add_executable(${PROJECT_NAME} ./source/main.cpp
+			       ./source/sys_info.cpp
                                ./source/microsvc_controller.cpp
                                ./source/foundation/network_utils.cpp
                                ./source/foundation/basic_controller.cpp)

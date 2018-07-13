@@ -26,6 +26,7 @@
 
 #include <std_micro_service.hpp>
 #include "microsvc_controller.hpp"
+#include "sys_info.hpp"
 
 using namespace web;
 using namespace http;
@@ -38,6 +39,17 @@ void MicroserviceController::initRestOpHandlers() {
     _listener.support(methods::PATCH, std::bind(&MicroserviceController::handlePatch, this, std::placeholders::_1));
 }
 
+json::value GetComplexObject(std::string name) {
+	auto person = json::value::object();
+        auto address = json::value::object();
+        person["name"] = json::value::string(name);
+        address["street"] = json::value::string("848 Brunswick Street");
+        address["postal code"] = json::value::string("E3B1J1");
+        person["address"] = address;
+
+	return person;
+}
+
 void MicroserviceController::handleGet(http_request message) {
     auto path = requestPath(message);
     if (!path.empty()) {
@@ -46,6 +58,42 @@ void MicroserviceController::handleGet(http_request message) {
             response["version"] = json::value::string("0.1.1");
             response["status"] = json::value::string("ready!");
             message.reply(status_codes::OK, response);
+        }
+        if (path[0] == "data") {
+		if(path[1] == "status") {
+			float cpuLoad = Sysinfo::GetCPULoad();
+			float memoryLoad = Sysinfo::GetSystemMemoryUsagePercentage();
+			auto response = json::value::object();
+			response["CPU Load"] = json::value::number(cpuLoad);
+			response["Memory Load "] = json::value::number(memoryLoad);
+			message.reply(status_codes::OK, response);
+		}
+		else if(path[1] == "number") {
+            		auto response = json::value::object();
+            		response["data"] = json::value::number(3.414);
+            		message.reply(status_codes::OK, response);
+		}
+		else if(path[1] == "string") {
+            		auto response = json::value::object();
+            		response["header"] = json::value::string("A test string");
+            		message.reply(status_codes::OK, response);
+		}
+		else if(path[1] == "object") {
+            		auto person = GetComplexObject("Mark Masry"); 
+            		message.reply(status_codes::OK, person);
+		}
+		else if(path[1] == "array" ) {
+			
+			std::vector<web::json::value> arrayNames;
+			for(int i=0;i<10;i++) {
+				arrayNames.push_back(GetComplexObject("Mark"));
+			}
+
+			message.reply(status_codes::OK, json::value::array(arrayNames));
+		}
+		else {
+        		message.reply(status_codes::NotFound);
+		}
         }
     }
     else {
