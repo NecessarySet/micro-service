@@ -51,36 +51,35 @@ json::value GetComplexObject(std::string name) {
 }
 
 void MicroserviceController::handleGet(http_request message) {
+    
+    http_response response(status_codes::OK);
+    response.headers().add(U("Access-Control-Allow-Origin"), U("*"));
+
     auto path = requestPath(message);
     if (!path.empty()) {
+
+	auto output = json::value::object();
+	response.set_status_code(status_codes::OK);
+
         if (path[0] == "service" && path[1] == "test") {
-            auto response = json::value::object();
-            response["version"] = json::value::string("0.1.1");
-            response["status"] = json::value::string("ready!");
-            message.reply(status_codes::OK, response);
+            output["version"] = json::value::string("0.1.1");
+            output["status"] = json::value::string("ready!");
         }
         if (path[0] == "data") {
 		if(path[1] == "status") {
 			float cpuLoad = Sysinfo::GetCPULoad();
 			float memoryLoad = Sysinfo::GetSystemMemoryUsagePercentage();
-			auto response = json::value::object();
-			response["CPU Load"] = json::value::number(cpuLoad);
-			response["Memory Load "] = json::value::number(memoryLoad);
-			message.reply(status_codes::OK, response);
+			output["CPU"] = json::value::number(cpuLoad);
+			output["Memory"] = json::value::number(memoryLoad);
 		}
 		else if(path[1] == "number") {
-            		auto response = json::value::object();
-            		response["data"] = json::value::number(3.414);
-            		message.reply(status_codes::OK, response);
+            		output["data"] = json::value::number(3.414);
 		}
 		else if(path[1] == "string") {
-            		auto response = json::value::object();
-            		response["header"] = json::value::string("A test string");
-            		message.reply(status_codes::OK, response);
+            		output["header"] = json::value::string("A test string");
 		}
 		else if(path[1] == "object") {
-            		auto person = GetComplexObject("Mark Masry"); 
-            		message.reply(status_codes::OK, person);
+            		output = GetComplexObject("Mark Masry"); 
 		}
 		else if(path[1] == "array" ) {
 			
@@ -88,17 +87,21 @@ void MicroserviceController::handleGet(http_request message) {
 			for(int i=0;i<10;i++) {
 				arrayNames.push_back(GetComplexObject("Mark"));
 			}
-
-			message.reply(status_codes::OK, json::value::array(arrayNames));
+			output = json::value::array(arrayNames);
 		}
 		else {
-        		message.reply(status_codes::NotFound);
+			response.set_status_code(status_codes::NotFound);
 		}
+
         }
+
+	response.set_body(output);	
     }
     else {
-        message.reply(status_codes::NotFound);
+	response.set_status_code(status_codes::NotFound);
     }
+    
+    message.reply(response);
 }
 
 void MicroserviceController::handlePatch(http_request message) {
