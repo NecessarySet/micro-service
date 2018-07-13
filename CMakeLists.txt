@@ -15,7 +15,7 @@ if(UNIX) # Darwing or Linux
 	    list(REVERSE OPENSSL_ROOT_DIR)
 
         find_package(OpenSSL 1.0.2 REQUIRED)
-        set(OPENSSL_VERSION "1.0.2f")
+        set(OPENSSL_VERSION "1.0.2o_2")
     else()
         find_package(OpenSSL 1.0.1 REQUIRED)
         set(OPENSSL_VERSION "1.0.1")
