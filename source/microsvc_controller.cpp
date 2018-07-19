@@ -27,6 +27,7 @@
 #include <std_micro_service.hpp>
 #include "microsvc_controller.hpp"
 #include "sys_info.hpp"
+#include "proto/status.pb.h"  //protocol buffer data definition
 
 using namespace web;
 using namespace http;
