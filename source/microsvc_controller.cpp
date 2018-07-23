@@ -59,6 +59,8 @@ void MicroserviceController::handleGet(http_request message) {
     auto path = requestPath(message);
     if (!path.empty()) {
 
+	status::StatusUpdate update;
+
 	auto output = json::value::object();
 	response.set_status_code(status_codes::OK);
 
@@ -70,39 +72,32 @@ void MicroserviceController::handleGet(http_request message) {
 		if(path[1] == "status") {
 			float cpuLoad = Sysinfo::GetCPULoad();
 			float memoryLoad = Sysinfo::GetSystemMemoryUsagePercentage();
+			update.set_cpu(cpuLoad);
+			update.set_mem(memoryLoad);
+
+
+			const unsigned long dataSize = update.ByteSizeLong();
+			std::vector<unsigned char> out(dataSize);
+			update.SerializeToArray(out.data(), dataSize);
+
+			response.set_body(out);
+			message.reply(response);
+
 			output["CPU"] = json::value::number(cpuLoad);
 			output["Memory"] = json::value::number(memoryLoad);
 		}
-		else if(path[1] == "number") {
-            		output["data"] = json::value::number(3.414);
-		}
-		else if(path[1] == "string") {
-            		output["header"] = json::value::string("A test string");
-		}
-		else if(path[1] == "object") {
-            		output = GetComplexObject("Mark Masry"); 
-		}
-		else if(path[1] == "array" ) {
-			
-			std::vector<web::json::value> arrayNames;
-			for(int i=0;i<10;i++) {
-				arrayNames.push_back(GetComplexObject("Mark"));
-			}
-			output = json::value::array(arrayNames);
-		}
 		else {
 			response.set_status_code(status_codes::NotFound);
+			message.reply(response);
 		}
 
         }
-
-	response.set_body(output);	
     }
     else {
 	response.set_status_code(status_codes::NotFound);
+	message.reply(response);
     }
     
-    message.reply(response);
 }
 
 void MicroserviceController::handlePatch(http_request message) {

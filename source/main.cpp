@@ -29,12 +29,15 @@
 #include <runtime_utils.hpp>
 
 #include "microsvc_controller.hpp"
+#include "proto/status.pb.h"
 
 using namespace web;
 using namespace cfx;
 
 int main(int argc, const char * argv[]) {
     InterruptHandler::hookSIGINT();
+
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
 
     MicroserviceController server;
     server.setEndpoint("http://host_auto_ip4:6502/v1/api");
