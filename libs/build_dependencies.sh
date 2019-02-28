@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RESTSDK_VERSION="v2.10.1-mod"
+RESTSDK_VERSION="v2.10.6"
 DEFAULT_LIB_DIRECTORY_PATH="."
 
 libDir=${1:-$DEFAULT_LIB_DIRECTORY_PATH}
@@ -13,8 +13,8 @@ install_cpprestsdk(){
       rm -rf "$restsdkDir"
    fi
    
-	git clone https://github.com/NecessarySet/cpprestsdk.git "$restsdkDir"
-	(cd $restsdkDir && git checkout $RESTSDK_VERSION)
+	git clone https://github.com/Microsoft/cpprestsdk.git "$restsdkDir"
+	(cd $restsdkDir && git checkout tags/$RESTSDK_VERSION -b $RESTSDK_VERSION)
 	mkdir "$restsdkBuildDir"
 	if [[ "$OSTYPE" == "linux-gnu" ]]; then
 		export CXX=g++-4.9
